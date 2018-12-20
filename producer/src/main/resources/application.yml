@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: weblogger-producer
+  main:
+    show-banner: false
+  http:
+    multipart:
+      maxFileSize: 2Mb
+      maxRequestSize: 2Mb
+server:
+  port: 8001
+  context-path: /
+  session-timeout: 30
+  tomcat:
+    uri-encoding: UTF-8

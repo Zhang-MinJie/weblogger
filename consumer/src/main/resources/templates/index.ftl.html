@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>weblogs</title>
+	<script src="/js/jquery-3.3.1.min.js"></script>
+	<script src="/js/sockjs.min.js"></script>
+	<script src="/js/stomp.js"></script>
+	<script>
+		var stompClient = null;
+
+	    function connect() {
+	        var socket = new SockJS('/any-socket');
+	        stompClient = Stomp.over(socket);
+	        stompClient.connect({}, function (frame) {
+	            // 订阅 /topic/notice 实现群聊
+	            stompClient.subscribe('/topic/notice', function (message) {
+	    	       	console.log(message);
+	                showMessage(message.body);
+	            });
+	        });
+	    }
+
+	    function showMessage(message) {
+	        // 处理消息在页面的显示
+	        if($(".weblogs-body").children("p").length > 0) {
+	        	$(".weblogs-body").append("<hr />");
+	        }
+	        var clazz = null;
+	        var info = message.match(/^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d*]\[INFO *\]/g);
+	        var error = message.match(/^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d*]\[ERROR *\]/g);
+	        var warn = message.match(/^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d*]\[WARN *\]/g);
+	        console.log(info);
+	        console.log(error);
+	        console.log(warn);
+	        if(isNotEmpty(info)) {
+	        	clazz = 'log-info';
+	        } else if(isNotEmpty(error)) {
+	        	clazz = 'log-error';
+	        } else if(isNotEmpty(warn)) {
+	        	clazz = 'log-warn';
+	        } else {
+	        	clazz = 'log-other';
+	        }
+	        var isScrollToEnd = $(document).height()-$(window).height() - 100 < $(document).scrollTop();
+	        $(".weblogs-body").append('<p class="' + clazz + '">' + message + '</p>');
+	        if(isScrollToEnd) {
+	        	// 拉到底部
+	        	scrollToEnd();
+	        } else {
+	        	// 不需要拉到底部
+	        	// 不作处理
+	        }
+	    }
+	    
+	    function scrollToEnd(){//滚动到底部
+            var h = $(document).height()-$(window).height();
+            $(document).scrollTop(h); 
+		}
+	    
+	    function isNotEmpty(val) {
+	    	return val != null && val != undefined;
+	    }
+
+	    $(function () {
+	        // 建立websocket连接
+	        connect();
+	        $("#clear").click(function() {
+	        	$(".weblogs-body").html("");
+	        });
+	    });
+	</script>
+	<style type="text/css">
+		*,body {
+			padding: 0px;
+			margin: 0px;
+		}
+		body{
+			background-color: #333;
+		}
+		.weblogs-body{
+			padding: opx;
+		}
+		.weblogs-body p{
+			padding: 6px 12px;
+			font-size: 16px;
+			margin: 0px;
+			color: black;
+			font-weight: bolder;
+		}
+		.weblogs-body p.log-other {
+			color: green;
+			font-weight: bolder;
+		}
+		.weblogs-body p.log-info {
+			color: #FFF;
+			font-weight: normal;
+		}
+		.weblogs-body p.log-error {
+			color: red;
+			font-weight: bolder;
+		}
+		.weblogs-body p.log-warn {
+			color: yellow;
+			font-weight: bolder;
+		}
+		.weblogs-body hr{
+			border: 0;
+			border-bottom: 1px solid #444;
+		}
+	</style>
+</head>
+<body>
+	<!-- <button id="clear">清屏</button> -->
+	<div class="weblogs-body">
+	</div>
+</body>
+</html>

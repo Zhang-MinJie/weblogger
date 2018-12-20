@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: weblogger-consumer
+  main:
+    show-banner: false
+  http:
+    multipart:
+      maxFileSize: 2Mb
+      maxRequestSize: 2Mb
+  freemarker:
+    template-loader-path: classpath:/templates
+    cache: false
+    charset: UTF-8
+    check-template-location: true
+    content-type: text/html
+    expose-request-attributes: true
+    allow-request-override: true
+    expose-session-attributes: true
+    allow-session-override: true
+    request-context-attribute: request
+    suffix: .ftl.html
+  kafka:
+    bootstrap-servers: 172.23.0.3:9092,172.23.0.4:9092,172.23.0.5:9092
+    consumer:
+      group-id: logsGroup
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+server:
+  port: 8002
+  context-path: /
+  session-timeout: 30
+  tomcat:
+    uri-encoding: UTF-8
