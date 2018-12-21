@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
 	<springProperty scope="context" name="APP_NAME" source="spring.application.name" />
+	<conversionRule conversionWord="ip" converterClass="cn.zhmj.weblogger.producer.configuration.LogIpConfig" />
 	<property name="LOG_HOME" value="/home/zhangminjie/workspace/other/demo/logs/${APP_NAME}" />
 	<property name="LOG_FILE" value="${LOG_HOME}/logback.log" />
-	<property name="PATTERN" value="[%d{yyyy-MM-dd HH:mm:ss.SSS}][%-5level][${APP_NAME}][%thread][%logger#%line]: %msg%n" />
+	<property name="PATTERN" value="[%d{yyyy-MM-dd HH:mm:ss.SSS}][%-5level][${APP_NAME}][%ip][%thread][%logger#%line]: %msg%n" />
 
 	<appender name="CONSOLE"
 		class="ch.qos.logback.core.ConsoleAppender">
